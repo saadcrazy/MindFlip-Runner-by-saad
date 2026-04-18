@@ -1,33 +1,115 @@
-# Invertia: Reverse Control Runner 🎮
+# MindFlip Runner — README
 
-A highly addictive, cyberpunk-themed HTML5 canvas game where your controls randomly betray you.
+A single-file, browser-based 2D endless runner with control-inverting mechanics.
+No server needed. No install. Open the HTML file and play.
 
-## 🧠 The Twist
-The game starts as a standard platform runner:
-- **Move**: Left / Right Arrows (or tap on-screen buttons)
-- **Jump**: Spacebar / Up Arrow (or tap jump button)
+---
 
-But watch out for the **GLITCH**. When the "GLITCH IMMINENT" warning appears and the screen turns red, your **Left and Right controls are instantly REVERSED**. You'll need to instantly rewire your brain to survive the upcoming gaps and moving platforms.
+## How to Play
 
-## 🚀 How to Host on Vercel via GitHub
+Open `MindFlipRunner.html` in any modern browser (Chrome, Firefox, Safari, Edge).
 
-This project consists of a single `index.html` file, making it incredibly easy to host for free on Vercel.
+### Controls
 
-### Step 1: Push to GitHub
-1. Create a new repository on your GitHub account.
-2. Upload the `index.html` file and this `README.md` to your repository.
-3. Commit and push the changes.
+| Action       | Desktop              | Mobile          |
+|--------------|----------------------|-----------------|
+| Move Left    | ← Arrow / A          | Tap LEFT button |
+| Move Right   | → Arrow / D          | Tap RIGHT button|
+| Jump         | Space / W / ↑ Arrow  | Tap JUMP button |
 
-### Step 2: Deploy on Vercel
-1. Go to [Vercel](https://vercel.com/) and sign up or log in using your GitHub account.
-2. Click on **Add New...** -> **Project**.
-3. Import the GitHub repository you just created.
-4. Leave all the build and output settings as default (since it's plain HTML).
-5. Click **Deploy**.
+> **The Twist:** At random intervals your LEFT and RIGHT controls swap.
+> The HUD shows NORMAL or FLIPPED — watch it!
+> Jump is never inverted. Only left/right flips.
 
-Within seconds, Vercel will give you a live `.vercel.app` URL. You can share this link for anyone to play the game on their Desktop or Mobile device!
+---
 
-## 🛠️ Built With
-- Pure HTML5 `<canvas>`
-- Vanilla JavaScript
-- Zero external dependencies
+## Platform Types
+
+| Color  | Type      | Behavior                                          |
+|--------|-----------|---------------------------------------------------|
+| Cyan   | Static    | Normal solid platform                             |
+| Purple | Moving    | Slides left or right continuously                 |
+| Orange | Crumble   | Shakes then falls ~0.9s after you land            |
+| Green  | Conveyor  | Pushes you in the arrow direction                 |
+| Yellow | Blink     | Disappears and reappears every ~0.8s              |
+| Red outline | Phase Gate | Triggers an immediate control flip on touch |
+
+---
+
+## Game Systems
+
+- **Flip Warning:** 0.5s before every flip, text flashes on screen and the color palette shifts warm (flipped) or cool (normal). Use this window to prepare.
+- **Snap-Back Trap:** When controls return to normal, your brain will misfire again — this is intentional.
+- **Speed Scaling:** Speed increases every meter. Flips happen more frequently as distance grows.
+- **Procedural Chunks:** Levels are built from hand-designed 5-second chunks stitched randomly. Every run feels different but is always beatable.
+- **Data Shards:** Yellow diamonds floating mid-air. Risky to collect, no gameplay effect — score flex only.
+- **Best Score:** Saved to browser localStorage. Persists across sessions.
+
+---
+
+## Files
+
+```
+MindFlipRunner.html   — The entire game (HTML + CSS + JS, single file)
+README.md             — This file
+```
+
+---
+
+## Browser Compatibility
+
+| Browser         | Status  |
+|-----------------|---------|
+| Chrome 90+      | ✅ Full  |
+| Firefox 88+     | ✅ Full  |
+| Safari 14+      | ✅ Full  |
+| Edge 90+        | ✅ Full  |
+| Mobile Chrome   | ✅ Full  |
+| Mobile Safari   | ✅ Full  |
+
+Requires: Canvas 2D API, requestAnimationFrame, localStorage.
+No external dependencies. No internet connection required after first load
+(Google Fonts load from CDN — game works without them, fonts fall back gracefully).
+
+---
+
+## Performance Notes
+
+- Runs at 60fps on all modern devices.
+- Off-screen platforms are culled from rendering every frame.
+- Old platforms (far left of world) are removed from memory automatically.
+- Delta-time capped at 50ms to prevent physics explosions on tab switch.
+- No audio engine (keeping it lag-free and dependency-free).
+
+---
+
+## Known Limitations
+
+- No audio (by design — keeps the file lightweight and universally compatible).
+- Best score stored per browser (no cloud save).
+- Versus mode and full progression system described in the GDD are not included in this prototype.
+
+---
+
+## Customization Quick Reference
+
+Open the HTML file and find these constants near the top of the `<script>` tag:
+
+```js
+const GRAVITY      = 0.55;    // Higher = falls faster
+const JUMP_FORCE   = -13.5;   // More negative = higher jump
+const MOVE_SPEED   = 5.2;     // Player horizontal speed
+const PLATFORM_H   = 18;      // Platform height in pixels
+```
+
+To change flip frequency, edit `scheduleNextFlip()`:
+```js
+function scheduleNextFlip() {
+  const base = Math.max(4, 10 - G.distance / 200); // 4–10 seconds between flips
+  G.nextFlipIn = base + Math.random() * 4;
+}
+```
+
+---
+
+Made with: HTML5 Canvas · Vanilla JS · Orbitron + Share Tech Mono (Google Fonts)
